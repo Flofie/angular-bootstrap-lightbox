@@ -2,7 +2,7 @@
 
 This lightbox displays images using an [Angular Material](https://material.angularjs.org/1.1.0/) (v1.1.0).
 
-When the lightbox is opened, navigating to the previous/next image can be achieved by clicking buttons above the image, clicking the left/right arrow keys, or swiping to the left/right (optional with ngTouch). The escape key for closing the modal is automatically binded by AngularUI Bootstrap.
+When the lightbox is opened, navigating to the previous/next image can be achieved by clicking buttons above the image, clicking the left/right arrow keys, or swiping to the left/right. The escape key for closes the lightbox.
 
 Large images are scaled to fit inside the window. An optional image caption overlays the top left corner of the image.
 
