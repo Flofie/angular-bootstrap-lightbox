@@ -1,4 +1,4 @@
-# angular-material-lightbox
+# angular-material-advanced-lightbox
 
 This lightbox displays images using an [Angular Material](https://material.angularjs.org/1.1.0/) (v1.1.0).
 
@@ -8,26 +8,26 @@ Large images are scaled to fit inside the window. An optional image caption over
 
 ## Demos
 
-[Demos](http://compact.github.io/angular-bootstrap-lightbox/) / [Plunker](http://plnkr.co/edit/pEXXDYLl0NtkqupEXaJK?p=preview)
+[Demos](http://flofie.github.io/angular-material-advanced-lightbox/)
 
 ## Setup
 
 1. Install in one of the following ways:
 
-  * Install with Bower: `bower install angular-material-lightbox --save`
-  * Install with npm: `npm install angular-material-lightbox --save`
+  * Install with Bower: `bower install angular-material-advanced-lightbox --save`
+  * Install with npm: `npm install angular-material-advanced-lightbox --save`
   * Manually save the script and stylesheet from [`dist`](dist).
 
 2. Include the stylesheet in your app:
 
   ```html
-  <link rel="stylesheet" href="angular-material-lightbox/dist/angular-material-lightbox.css">
+  <link rel="stylesheet" href="angular-material-advanced-lightbox/dist/angular-material-advanced-lightbox.css">
   ```
 
 3. Include the script in your app:
 
   ```html
-  <script src="angular-material-lightbox/dist/angular-material-lightbox.js"></script>
+  <script src="angular-material-advanced-lightbox/dist/angular-material-advanced-lightbox.js"></script>
   ```
 
 4. The Angular module is named `mdLightbox`. Add it as a dependency to your module:
