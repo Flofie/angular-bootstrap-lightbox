@@ -1,7 +1,7 @@
 {
-  "name": "angular-bootstrap-lightbox",
-  "version": "0.12.0",
-  "description": "An AngularJS lightbox built using UI Bootstrap Modal.",
+  "name": "angular-material-advanced-lightbox",
+  "version": "0.1.1",
+  "description": "An AngularJS lightbox built using Angular Material.",
   "keywords": [
     "angular",
     "lightbox",
@@ -11,9 +11,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/compact/angular-bootstrap-lightbox.git"
+    "url": "git://github.com/Flofie/angular-material-advanced-lightbox.git"
   },
-  "homepage": "http://compact.github.io/angular-bootstrap-lightbox/",
+  "homepage": "https://flofie.github.io/angular-material-advanced-lightbox/",
   "dependencies": {},
   "devDependencies": {
     "grunt": "^0.4.5",

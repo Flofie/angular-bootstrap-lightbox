@@ -1,22 +1,12 @@
 /**
- * @namespace bootstrapLightbox
+ * @namespace mdLightbox
  */
-angular.module('bootstrapLightbox', [
-  'ui.bootstrap'
+angular.module('mdLightbox', [
+  'ngMaterial'
 ]);
 
 // optional dependencies
 try {
-  angular.module('angular-loading-bar');
-  angular.module('bootstrapLightbox').requires.push('angular-loading-bar');
-} catch (e) {}
-
-try {
-  angular.module('ngTouch');
-  angular.module('bootstrapLightbox').requires.push('ngTouch');
-} catch (e) {}
-
-try {
   angular.module('videosharing-embed');
-  angular.module('bootstrapLightbox').requires.push('videosharing-embed');
+  angular.module('mdLightbox').requires.push('videosharing-embed');
 } catch (e) {}

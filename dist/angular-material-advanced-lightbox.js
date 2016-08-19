@@ -1,4 +1,72 @@
 /**
+ * @namespace mdLightbox
+ */
+angular.module('mdLightbox', [
+  'ngMaterial'
+]);
+
+// optional dependencies
+try {
+  angular.module('videosharing-embed');
+  angular.module('mdLightbox').requires.push('videosharing-embed');
+} catch (e) {}
+angular.module('mdLightbox').run(['$templateCache', function($templateCache) {
+  'use strict';
+
+  $templateCache.put('lightbox.html',
+    "<md-dialog aria-label=Lightbox class=\"modal-body lightbox-modal-body\" md-swipe-left=Lightbox.nextImage() md-swipe-right=Lightbox.prevImage()><md-toolbar><div class=\"md-toolbar-tools lightbox-nav\"><md-button class=\"md-icon-button close-button\" aria-hidden=true ng-click=closeModal()>×</md-button><div layout=row ng-if=\"Lightbox.images.length > 1\" flex layout-fill layout-align=\"center center\"><a class=md-button ng-click=Lightbox.prevImage()>‹ Previous</a> <a hide ng-href={{Lightbox.imageUrl}} target=_blank class=md-button title=\"Open in new tab\">Open image in new tab</a> <a class=md-button ng-click=Lightbox.nextImage()>Next ›</a></div></div></md-toolbar><div layout=row layout-fill layout-align=\"center center\" ng-show=Lightbox.loading class=lightbox-loading><md-progress-circular md-mode=indeterminate md-diameter=90></md-progress-circular></div><div ng-hide=Lightbox.loading><div class=lightbox-image-container><div class=lightbox-image-caption><span>{{Lightbox.imageCaption}}</span></div><img ng-if=!Lightbox.isVideo(Lightbox.image) lightbox-src={{Lightbox.imageUrl}}><div ng-if=Lightbox.isVideo(Lightbox.image) class=\"embed-responsive embed-responsive-16by9\"><video ng-if=!Lightbox.isSharedVideo(Lightbox.image) lightbox-src={{Lightbox.imageUrl}} controls autoplay></video><embed-video ng-if=Lightbox.isSharedVideo(Lightbox.image) lightbox-src={{Lightbox.imageUrl}} ng-href={{Lightbox.imageUrl}} iframe-id=lightbox-video class=embed-responsive-item><a ng-href={{Lightbox.imageUrl}}>Watch video</a></embed-video></div></div></div></md-dialog>"
+  );
+
+}]);
+/**
+ * @class     ImageLoader
+ * @classdesc Service for loading an image.
+ * @memberOf  mdLightbox
+ */
+angular.module('mdLightbox').service('ImageLoader', ['$q', '$http',
+    function ($q, $http) {
+        /**
+         * Load the image at the given URL.
+         * @param    {String} url
+         * @return   {Promise} A $q promise that resolves when the image has loaded
+         *   successfully.
+         * @type     {Function}
+         * @name     load
+         * @memberOf mdLightbox.ImageLoader
+         */
+        this.load = function (url) {
+            var deferred = $q.defer();
+
+            var image = new Image();
+
+            // when the image has loaded
+            image.onload = function () {
+                // check image properties for possible errors
+                if ((typeof this.complete === 'boolean' && this.complete === false) ||
+                    (typeof this.naturalWidth === 'number' && this.naturalWidth === 0)) {
+                    deferred.reject();
+                }
+
+                deferred.resolve(image);
+            };
+
+            // when the image fails to load
+            image.onerror = function () {
+                deferred.reject();
+            };
+
+            // start loading the image
+            $http.get(url, { responseType: 'arraybuffer' })
+                .then(function (res) {
+                    var blob = new Blob([res.data], { type: res.headers('Content-Type') });
+                    image.src = (window.URL || window.webkitURL).createObjectURL(blob);
+                });
+
+            return deferred.promise;
+        };
+
+    }]);
+/**
  * @class     Lightbox
  * @classdesc Lightbox service.
  * @memberOf  mdLightbox
@@ -432,3 +500,213 @@ angular.module('mdLightbox').provider('Lightbox', function () {
             return Lightbox;
         }];
 });
+/**
+ * @class     lightboxSrc
+ * @classdesc This attribute directive is used in an `<img>` element in the
+ *   modal template in place of `src`. It handles resizing both the `<img>`
+ *   element and its relevant parent elements within the modal.
+ * @memberOf  mdLightbox
+ */
+angular.module('mdLightbox').directive('lightboxSrc', ['$window',
+    'ImageLoader', 'Lightbox', function ($window, ImageLoader, Lightbox) {
+        // Calculate the dimensions to display the image. The max dimensions override
+        // the min dimensions if they conflict.
+        var calculateImageDisplayDimensions = function (dimensions, fullScreenMode) {
+            var w = dimensions.width;
+            var h = dimensions.height;
+            var minW = dimensions.minWidth;
+            var minH = dimensions.minHeight;
+            var maxW = dimensions.maxWidth;
+            var maxH = dimensions.maxHeight;
+
+            var displayW = w;
+            var displayH = h;
+
+            if (!fullScreenMode) {
+                // resize the image if it is too small
+                if (w < minW && h < minH) {
+                    // the image is both too thin and short, so compare the aspect ratios to
+                    // determine whether to min the width or height
+                    if (w / h > maxW / maxH) {
+                        displayH = minH;
+                        displayW = Math.round(w * minH / h);
+                    } else {
+                        displayW = minW;
+                        displayH = Math.round(h * minW / w);
+                    }
+                } else if (w < minW) {
+                    // the image is too thin
+                    displayW = minW;
+                    displayH = Math.round(h * minW / w);
+                } else if (h < minH) {
+                    // the image is too short
+                    displayH = minH;
+                    displayW = Math.round(w * minH / h);
+                }
+
+                // resize the image if it is too large
+                if (w > maxW && h > maxH) {
+                    // the image is both too tall and wide, so compare the aspect ratios
+                    // to determine whether to max the width or height
+                    if (w / h > maxW / maxH) {
+                        displayW = maxW;
+                        displayH = Math.round(h * maxW / w);
+                    } else {
+                        displayH = maxH;
+                        displayW = Math.round(w * maxH / h);
+                    }
+                } else if (w > maxW) {
+                    // the image is too wide
+                    displayW = maxW;
+                    displayH = Math.round(h * maxW / w);
+                } else if (h > maxH) {
+                    // the image is too tall
+                    displayH = maxH;
+                    displayW = Math.round(w * maxH / h);
+                }
+            } else {
+                // full screen mode
+                var ratio = Math.min(maxW / w, maxH / h);
+
+                var zoomedW = Math.round(w * ratio);
+                var zoomedH = Math.round(h * ratio);
+
+                displayW = Math.max(minW, zoomedW);
+                displayH = Math.max(minH, zoomedH);
+            }
+
+            return {
+                'width': displayW || 0,
+                'height': displayH || 0 // NaN is possible when dimensions.width is 0
+            };
+        };
+
+        // format the given dimension for passing into the `css()` method of `jqLite`
+        var formatDimension = function (dimension) {
+            return typeof dimension === 'number' ? dimension + 'px' : dimension;
+        };
+
+        // the dimensions of the image
+        var imageWidth = 0;
+        var imageHeight = 0;
+
+        return {
+            'link': function (scope, element, attrs) {
+                // resize the img element and the containing modal
+                var resize = function () {
+                    // get the window dimensions
+                    var windowWidth = $window.innerWidth;
+                    var windowHeight = $window.innerHeight;
+
+                    // calculate the max/min dimensions for the image
+                    var imageDimensionLimits = Lightbox.calculateImageDimensionLimits({
+                        'windowWidth': windowWidth,
+                        'windowHeight': windowHeight,
+                        'imageWidth': imageWidth,
+                        'imageHeight': imageHeight
+                    });
+
+                    // calculate the dimensions to display the image
+                    var imageDisplayDimensions = calculateImageDisplayDimensions(
+                        angular.extend({
+                            'width': imageWidth,
+                            'height': imageHeight,
+                            'minWidth': 1,
+                            'minHeight': 1,
+                            'maxWidth': 3000,
+                            'maxHeight': 3000,
+                        }, imageDimensionLimits),
+                        Lightbox.fullScreenMode
+                    );
+
+                    // calculate the dimensions of the modal container
+                    var modalDimensions = Lightbox.calculateModalDimensions({
+                        'windowWidth': windowWidth,
+                        'windowHeight': windowHeight,
+                        'imageDisplayWidth': imageDisplayDimensions.width,
+                        'imageDisplayHeight': imageDisplayDimensions.height
+                    });
+
+                    // resize the image
+                    element.css({
+                        'width': imageDisplayDimensions.width + 'px',
+                        'height': imageDisplayDimensions.height + 'px'
+                    });
+
+                    // setting the height on .modal-dialog does not expand the div with the
+                    // background, which is .modal-content
+                    angular.element(
+                        //document.querySelector('.lightbox-modal .modal-dialog')
+                        document.querySelector('md-dialog')
+                    ).css({
+                        'width': formatDimension(modalDimensions.width)
+                    });
+
+                    // .modal-content has no width specified; if we set the width on
+                    // .modal-content and not on .modal-dialog, .modal-dialog retains its
+                    // default width of 600px and that places .modal-content off center
+                    angular.element(
+                        //document.querySelector('.lightbox-modal .modal-content')
+                        document.querySelector('md-dialog')
+                    ).css({
+                        'height': formatDimension(modalDimensions.height)
+                    });
+                };
+
+                // load the new image and/or resize the video whenever the attr changes
+                scope.$watch(function () {
+                    return attrs.lightboxSrc;
+                }, function (src) {
+                    // do nothing if there's no image
+                    if (!Lightbox.image) {
+                        return;
+                    }
+
+                    if (!Lightbox.isVideo(Lightbox.image)) { // image
+                        // blank the image before resizing the element
+                        element[0].src = '#';
+
+                        // handle failure to load the image
+                        var failure = function () {
+                            imageWidth = 0;
+                            imageHeight = 0;
+
+                            resize();
+                        };
+
+                        if (src) {
+                            ImageLoader.load(src).then(function (image) {
+                                // these variables must be set before resize(), as they are used
+                                // in it
+                                imageWidth = image.naturalWidth;
+                                imageHeight = image.naturalHeight;
+
+                                // resize the img element and the containing modal
+                                resize();
+
+                                // show the image
+                                //element[0].src = src;
+                                //Flo
+                                element[0].src = image.src;
+                            }, failure);
+                        } else {
+                            failure();
+                        }
+                    } else { // video
+                        // default dimensions
+                        imageWidth = 1280;
+                        imageHeight = 720;
+
+                        // resize the video element and the containing modal
+                        resize();
+
+                        // the src attribute applies to `<video>` and not `<embed-video>`
+                        element[0].src = src;
+                    }
+                });
+
+                // resize the image and modal whenever the window gets resized
+                angular.element($window).on('resize', resize);
+            }
+        };
+    }]);

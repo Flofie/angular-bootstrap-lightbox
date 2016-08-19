@@ -1,20 +1,18 @@
 .lightbox-nav {
   position: relative;
+  margin-top: 9px;
   margin-bottom: 12px; /* the font-size of .btn-xs */
   height: 22px;
   text-align: center;
   font-size: 0; /* prevent the otherwise inherited font-size and line-height from adding extra space to the bottom of this div */
 }
 
-.lightbox-nav .btn-group {
-  vertical-align: top;
-}
-
-.lightbox-nav .close {
+.lightbox-nav .close-button {
   /* absolutely position this in order to center the nav buttons */
-  position: absolute;
-  top: 0;
-  right: 0;
+    position: absolute;
+    top: -9px;
+    right: -6px;
+    font-size: 30px;
 }
 
 .lightbox-image-container {
@@ -42,4 +40,14 @@
   /* pad the left and right of each line of text */
   box-shadow: 0.4em 0 0 rgba(255, 255, 255, 0.75),
     -0.4em 0 0 rgba(255, 255, 255, 0.75);
+}
+
+.lightbox-modal-body {
+    max-width: 100%; 
+    max-height: 100%; 
+    overflow: hidden;
+}
+
+.lightbox-loading {
+    min-height: 79%;
 }

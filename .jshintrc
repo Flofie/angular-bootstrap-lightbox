@@ -8,7 +8,9 @@
   "globals": {
     "angular": true,
     "document": true,
-    "Image": true
+    "Image": true,
+    "Blob": true,
+    "window":  true
   },
   "immed": true,
   "indent": 2,
