@@ -1,4 +1,4 @@
-# angular-bootstrap-lightbox
+# angular-material-lightbox
 
 This lightbox displays images using an [Angular Material](https://material.angularjs.org/1.1.0/) (v1.1.0).
 
@@ -14,26 +14,26 @@ Large images are scaled to fit inside the window. An optional image caption over
 
 1. Install in one of the following ways:
 
-  * Install with Bower: `bower install angular-bootstrap-lightbox --save`
-  * Install with npm: `npm install angular-bootstrap-lightbox --save`
+  * Install with Bower: `bower install angular-material-lightbox --save`
+  * Install with npm: `npm install angular-material-lightbox --save`
   * Manually save the script and stylesheet from [`dist`](dist).
 
 2. Include the stylesheet in your app:
 
   ```html
-  <link rel="stylesheet" href="angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css">
+  <link rel="stylesheet" href="angular-material-lightbox/dist/angular-material-lightbox.css">
   ```
 
 3. Include the script in your app:
 
   ```html
-  <script src="angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.js"></script>
+  <script src="angular-material-lightbox/dist/angular-material-lightbox.js"></script>
   ```
 
-4. The Angular module is named `bootstrapLightbox`. Add it as a dependency to your module:
+4. The Angular module is named `mdLightbox`. Add it as a dependency to your module:
 
   ```js
-  angular.module('app', ['bootstrapLightbox']);
+  angular.module('app', ['mdLightbox']);
   ```
 
 5. Optional dependencies:
