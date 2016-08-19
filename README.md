@@ -164,7 +164,7 @@ For now, the maximum video dimensions are fixed at 1280x720 (16:9).
 
   ```sh
   git checkout gh-pages
-  git checkout master -- dist/angular-bootstrap-lightbox.min.js dist/angular-bootstrap-lightbox.min.css
+  git checkout master -- dist/angular-material-advanced-lightbox.min.js dist/angular-material-advanced-lightbox.min.css
   bundle install
   bundle exec jekyll serve
   ```
