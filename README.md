@@ -38,8 +38,6 @@ Large images are scaled to fit inside the window. An optional image caption over
 
 5. Optional dependencies:
 
-  * To enable swipe navigation in the lightbox, include the [ngTouch](https://docs.angularjs.org/api/ngTouch) script.
-  * To show a loading bar while an image is loading, include the [angular-loading-bar](https://github.com/chieffancypants/angular-loading-bar) script.
   * For video support, include the [ng-videosharing-embed](https://github.com/erost/ng-videosharing-embed) script.
 
 ## Basic example
